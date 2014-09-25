@@ -68,7 +68,15 @@ Path::as_string() const {
 
   for (const_iterator itr = begin(); itr != end(); ++itr) {
     s += '/';
-    s += *itr;
+    std::string item(*itr);
+    std::string::size_type sz = item.size();
+    if (sz > 255) {
+      item.resize(255);
+      std::string::size_type n = (*itr).rfind('.');
+      if (n != std::string::npos && sz - n < 5)
+        std::copy_n((*itr).begin()+n, sz-n, item.begin()+255-(sz-n));
+    }
+    s += item;
   }
 
   return s;
